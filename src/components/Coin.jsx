@@ -10,9 +10,6 @@ width: 25vh;
 export default class Coin extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            price: this.props.price
-        }
         this.handleClick = this.handleClick.bind(this);
     }
 
@@ -20,6 +17,7 @@ export default class Coin extends Component {
         //prevent the default action of submitting the form
         event.preventDefault();
 
+        this.props.handleRefresh(this.props.ticker);
 
         const randomPercentage = 0.995 + Math.random() * .01;
         this.setState( function(oldState) {
@@ -36,18 +34,15 @@ export default class Coin extends Component {
                 <CoinRow>{this.props.ticker}</CoinRow>
                 <CoinRow>{this.props.price}</CoinRow>
                 <CoinRow> <form action="#" method="POST" >
-                <button onClick={this.handleClick}>
-                        Refresh
-                    </button>
+                <button onClick={this.handleClick}>Refresh</button>
                     </form>
                 </CoinRow>
-            </tr>
+                </tr>
         );
     }
 }
-
 Coin.propTypes = {
     name: PropTypes.string.isRequired,
     ticker: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
-} 
+}
