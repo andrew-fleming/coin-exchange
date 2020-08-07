@@ -35,4 +35,4 @@ export default class ExchangeHeader extends Component {
             </>
         );
     }
-} 
+}
