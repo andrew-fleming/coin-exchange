@@ -2,6 +2,7 @@ import React, {useState, useEffect } from 'react';
 import CoinList from './components/CoinList';
 import AccountBalance from './components/AccountBalance';
 import ExchangeHeader from './components/ExchangeHeader';
+import Helicopter from './components/Helicopter';
 import styled from 'styled-components';
 import axios from 'axios';
 
@@ -10,6 +11,10 @@ const Div = styled.div`
   background-color: rgb(20, 56, 97);
   color: #cccccc;
 `;
+
+const CellRow = styled.div`
+  display: flex;
+  `;
 
 const COIN_COUNT = 10;
 const formatPrice = price => parseFloat(Number(price).toFixed(4));
@@ -20,7 +25,7 @@ function App (props){
   const [coinData, setCoinData] = useState([]);
 
   const componentDidMount = async () => {
-    const response = await axios.get('https://api.coinpaprika.com/v1/coins');
+    const response = await axios.get('https://api.coinpaprika.com/v1/coins/');
     const coinIds = response.data.slice(0, COIN_COUNT).map(coin => coin.id); 
     const tickerUrl = 'https://api.coinpaprika.com/v1/tickers/';
     const promises = coinIds.map(id => axios.get(tickerUrl + id));
@@ -64,19 +69,25 @@ useEffect(function() {
       setShowBalance(oldValue => !oldValue);
     }
 
+    const helicopterFunds = () => {
+      setBalance(balance => balance += 1200);
+    }
+
   return (
     <Div>
       <ExchangeHeader/>
-      <AccountBalance 
-        amount={balance} 
-        showBalance={showBalance}
-        handleBalance={handleBalance}
-        />
+        <CellRow>
+          <AccountBalance 
+            amount={balance} 
+            showBalance={showBalance}
+            handleBalance={handleBalance}/>
+          <Helicopter
+            helicopterFunds={helicopterFunds}/>
+        </CellRow>
       <CoinList 
         coinData={coinData} 
         handleRefresh={handleRefresh} 
-        showBalance={showBalance}
-        />
+        showBalance={showBalance}/>
     </Div>
   );
 }
