@@ -43,6 +43,7 @@ export default function Coin(props) {
 
         return (
             <tr>
+                <Td>{props.rank}</Td>
                 <TdName>{props.name}</TdName>
                 <Td>{props.ticker}</Td>
                 <Td>${props.price}</Td>

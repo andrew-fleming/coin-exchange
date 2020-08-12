@@ -30,9 +30,11 @@ function App (props){
     const coinData = await Promise.all(promises);
     const coinPriceData = coinData.map(function(response){
     const coin = response.data;
+    
         // retrieve prices
       return{
         key: coin.id,
+        rank: coin.rank,
         name: coin.name,
         ticker: coin.symbol,
         balance: 0,
@@ -49,10 +51,17 @@ function App (props){
   });
 
   const handleBrrrr = () => {
+    if(showBalance){
     setBalance( oldBalance => oldBalance + 1200);
+    } else {
+      alert('Balance must be displayed for the printer to go brrrr');
+    }
   }
 
   const handleTransaction = (isBuy, valueChangeId) => {
+    if(showBalance === false){
+      alert('Balance must be displayed for buying/selling');
+    } else {
     var balanceChange = isBuy ? 1 : -1;
     const newCoinData = coinData.map( function(values) {
       let newValues = { ...values };
@@ -63,6 +72,7 @@ function App (props){
       return newValues;
     });
     setCoinData(newCoinData);
+  }
   }
 
   const handleRefresh = async (valueChangeId) => {
