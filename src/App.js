@@ -2,9 +2,11 @@ import React, {useState, useEffect } from 'react';
 import CoinList from './components/CoinList';
 import AccountBalance from './components/AccountBalance';
 import ExchangeHeader from './components/ExchangeHeader';
-import Helicopter from './components/Helicopter';
 import styled from 'styled-components';
 import axios from 'axios';
+
+import 'bootswatch/dist/flatly/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/js/all';
 
 const Div = styled.div`
   text-align: center;
@@ -12,16 +14,12 @@ const Div = styled.div`
   color: #cccccc;
 `;
 
-const CellRow = styled.div`
-  display: flex;
-  `;
-
 const COIN_COUNT = 10;
 const formatPrice = price => parseFloat(Number(price).toFixed(4));
 
 function App (props){
   const [balance, setBalance] = useState(10000);
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
   const [coinData, setCoinData] = useState([]);
 
   const componentDidMount = async () => {
@@ -44,11 +42,28 @@ function App (props){
     setCoinData(coinPriceData);
   }
 
-useEffect(function() {
-  if(coinData.length === 0){
-    componentDidMount();
+  useEffect(function() {
+    if(coinData.length === 0){
+      componentDidMount();
+    }
+  });
+
+  const handleBrrrr = () => {
+    setBalance( oldBalance => oldBalance + 1200);
   }
-});
+
+  const handleTransaction = (isBuy, valueChangeId) => {
+    var balanceChange = isBuy ? 1 : -1;
+    const newCoinData = coinData.map( function(values) {
+      let newValues = { ...values };
+      if( valueChangeId === values.key) {
+        newValues.balance += balanceChange;
+        setBalance( oldBalance => oldBalance - balanceChange * newValues.price);
+      }
+      return newValues;
+    });
+    setCoinData(newCoinData);
+  }
 
   const handleRefresh = async (valueChangeId) => {
     const tickerUrl = `https://api.coinpaprika.com/v1/tickers/${valueChangeId}`;
@@ -69,24 +84,19 @@ useEffect(function() {
       setShowBalance(oldValue => !oldValue);
     }
 
-    const helicopterFunds = () => {
-      setBalance(balance => balance += 1200);
-    }
 
   return (
-    <Div>
+    <Div className="App">
       <ExchangeHeader/>
-        <CellRow>
-          <AccountBalance 
-            amount={balance} 
-            showBalance={showBalance}
-            handleBalance={handleBalance}/>
-          <Helicopter
-            helicopterFunds={helicopterFunds}/>
-        </CellRow>
+      <AccountBalance 
+        amount={balance} 
+        showBalance={showBalance}
+        handleBrrrr={handleBrrrr}
+        handleBalance={handleBalance}/>
       <CoinList 
         coinData={coinData} 
-        handleRefresh={handleRefresh} 
+        handleRefresh={handleRefresh}
+        handleTransaction={handleTransaction}
         showBalance={showBalance}/>
     </Div>
   );
